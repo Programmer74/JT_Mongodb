@@ -1,0 +1,51 @@
+<div class="panel panel-default" ng-init="getPicture() ">
+    <div class="panel-heading">
+        <h2 class="panel-title">Pictures</h2>
+    </div>
+        <table class="table table-striped">
+            <tbody>
+            <tr>
+                <td><input class="form-control" ng-model="img.url" placeholder="URL"></td>
+                <td><input class="form-control" ng-model="img.description" placeholder="Description"></td>
+                <td><input class="form-control" ng-model="img.tags" placeholder="Tags"></td>
+                <td>
+                    <button class="btn btn-primary" ng-click="addPicture()">Add Picture</button>
+                </td>
+                <td>
+                    <button class="btn btn-info" ng-click="deselect()">Clear</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Image</th>
+            <th>URL</th>
+            <th>Description</th>
+            <th>Tags</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="i in picture">
+            <td>{{i._id}}</td>
+            <td><img src="{{i.url}}" style="
+                max-height:100px;
+                max-width:100px;
+                height:auto;
+                width:auto;
+            "></td>
+            <td><a href="{{i.url}}">{{i.url}}</a></td>
+            <td>{{i.description}}</td>
+            <td>{{i.tags}}</td>
+
+            <td align="right"><button class="btn btn-danger" ng-click="removePicture(i._id)">Remove</button>&nbsp;&nbsp;
+                <button class="btn btn-warning" ng-click="updatePicture(i._id)">Edit</button>&nbsp;&nbsp;
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+
+</div>

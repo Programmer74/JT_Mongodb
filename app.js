@@ -20,6 +20,7 @@ app.use(bodyParser.json());
 // models
 Profile = require('./models/profile');
 Document = require('./models/document');
+Picture = require('./models/picture');
 
 // operations
 var cacheOp = require('./modules/cacheOperations');
@@ -174,8 +175,8 @@ app.post('/api/document', function (req, res) {
     console.log('> Creating document');
     Document.addDocument(document, function(err, document){
         if (err) {
-            console.error(">> Error posting stores", err);
-            res.status(500).send({ error: 'Posting stores failed!' });
+            console.error(">> Error posting documents", err);
+            res.status(500).send({ error: 'Posting documents failed!' });
         } else {
             console.log(">> Document is set to cache: ", document.toString());
             //client.setex(store1._id, CACHE_INTERVAL, JSON.stringify(store1)); // save the new store to cache
@@ -215,6 +216,99 @@ app.delete('/api/document/:_id', function(req, res) {
             // delete cache
             cacheOp.deleteCache(document, id);
             res.json(document);
+        }
+    })
+});
+
+/* ====================================== PICTURES =============================================*/
+// get all pictures
+app.get('/api/picture', function(req, res) {
+    console.log(">> Sending pictures...");
+    Picture.getPicture(function(err, picture){
+        if (err) {
+            console.error(">> Error finding pictures");
+            res.status(500).send({ error: 'Listing stores failed!' });
+        }
+        res.json(picture);
+    })
+});
+
+//get picture by id
+app.get('/api/picture/:_id', function (req, res) {
+    console.log("> Requested picture by id...");
+    var id = req.params._id;
+
+    client.get(id, function(err, result) {
+        if (err) console.log('Error searching cache');
+        if (!isEmptyObject(result)) { // search in cache
+            console.log('>> Found in cache');
+            res.json(JSON.parse(result));
+        } else { // if not in cache
+            console.log('>> Empty in cache. Finding in DB...');
+            Picture.getPictureById(id, function (err, picture) {
+                if (err) {
+                    console.error(">> Error finding pictures");
+                    res.status(500).send({error: 'Picture by ID failed!'});
+                } else { // add to cache
+                    console.log('>> Found in DB');
+                    //client.setex(id, CACHE_INTERVAL, JSON.stringify(store));
+                    if (!isEmptyObject(picture)) {
+                        cacheOp.setCache(client, picture, CACHE_INTERVAL);
+                        res.json(picture);
+                    }
+                }
+            });
+        }
+    });
+});
+
+// creating picture
+app.post('/api/picture', function (req, res) {
+    var picture = req.body;
+    console.log('> Creating picture');
+    Picture.addPicture(picture, function(err, picture){
+        if (err) {
+            console.error(">> Error posting pictures", err);
+            res.status(500).send({ error: 'Posting stores failed!' });
+        } else {
+            console.log(">> Picture is set to cache: ", picture.toString());
+            //client.setex(store1._id, CACHE_INTERVAL, JSON.stringify(store1)); // save the new store to cache
+            cacheOp.setCache(client, picture, CACHE_INTERVAL);
+            res.json(picture);
+        }
+    });
+});
+
+// updating picture
+app.put('/api/picture/:_id', function(req, res) {
+    var id = req.params._id;
+    var picture = req.body;
+    console.log('> Creating picture');
+    Picture.updatePicture(id, picture, {}, function(err, picture){
+        if (err) {
+            console.error(">> Error updating picture" + err);
+            res.status(500).send({ error: 'Updating picture failed!' });
+        } else {
+            console.log(">> Picture is updated in cache", picture);
+            //client.setex(store._id, CACHE_INTERVAL, JSON.stringify(store)); // save the new store to cache
+            cacheOp.deleteCache(client, id);
+            res.json(picture);
+        }
+    })
+});
+
+// deleting picture
+app.delete('/api/picture/:_id', function(req, res) {
+    var id = req.params._id;
+    console.log('> Trying to delete picture: ', id);
+    Picture.removePicture(id, function(err, picture) {
+        if (err) {
+            console.error(">> Error deleting store", err);
+            res.status(500).send({ error: 'Deleting store failed!' });
+        } else {
+            // delete cache
+            cacheOp.deleteCache(picture, id);
+            res.json(picture);
         }
     })
 });

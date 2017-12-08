@@ -43,10 +43,8 @@
  module.exports.updateDocument = function(id, document, options, callback){
      var query = {_id: id};
      var update = {
-         first_name: document.first_name,
-         last_name: document.last_name,
-         email: document.email,
-         password: document.password
+         url: document.url,
+         description: document.description
      };
      Document.findOneAndUpdate(query, update, options, callback);
  };

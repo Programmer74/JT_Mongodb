@@ -45,7 +45,7 @@ myApp.controller('DocumentController', [ '$scope', '$http', '$location', '$route
         };
 
         $scope.deselect = function() {
-            $scope.prf = "";
+            $scope.doc = "";
         }
 
     }]);
