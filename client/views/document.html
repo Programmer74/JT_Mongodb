@@ -1,0 +1,41 @@
+<div class="panel panel-default" ng-init="getDocument() ">
+    <div class="panel-heading">
+        <h2 class="panel-title">Documents</h2>
+    </div>
+        <table class="table table-striped">
+            <tbody>
+            <tr>
+                <td><input class="form-control" ng-model="doc.url" placeholder="URL"></td>
+                <td><input class="form-control" ng-model="doc.description" placeholder="Description"></td>
+                <td>
+                    <button class="btn btn-primary" ng-click="addDocument()">Add Document</button>
+                </td>
+                <td>
+                    <button class="btn btn-info" ng-click="deselect()">Clear</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>URL</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="d in document">
+            <td>{{d._id}}</td>
+            <td><a href="{{d.url}}">{{d.url}}</a></td>
+            <td>{{d.description}}</td>
+
+            <td align="right"><button class="btn btn-danger" ng-click="removeDocument(p._id)">Remove</button>&nbsp;&nbsp;
+                <button class="btn btn-warning" ng-click="updateDocument(p._id)">Edit</button>&nbsp;&nbsp;
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+
+</div>

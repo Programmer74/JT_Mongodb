@@ -18,8 +18,8 @@ app.use(bodyParser.json());
 //app.use(bodyParser.json({type: 'application/json'}));
 
 // models
-Store = require('./models/store');
 Profile = require('./models/profile');
+Document = require('./models/document');
 
 // operations
 var cacheOp = require('./modules/cacheOperations');
@@ -31,101 +31,6 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
     console.log("Connected");
-});
-
-
-// store
-// get all stores
-app.get('/api/store', function(req, res) {
-    console.log(">> Sending stores...");
-    Store.getStore(function(err, people){
-        if (err) {
-            console.error(">> Error finding stores");
-            res.status(500).send({ error: 'Listing stores failed!' });
-        }
-        res.json(people);
-    })
-});
-
-// here we use functions with cache
-// get store by its id
-app.get('/api/store/:_id', function (req, res) {
-    console.log("> Sending store...");
-    var id = req.params._id;
-
-    client.get(id, function(err, result) {
-        if (err) console.log('Error searching cache');
-        if (!isEmptyObject(result)) { // search in cache
-            console.log('>> Found in cache');
-            res.json(JSON.parse(result));
-        } else { // if not in cache
-            console.log('>> Empty in cache. Finding in DB...');
-            Store.getStoreById(id, function (err, store) {
-                if (err) {
-                    console.error(">> Error finding stores");
-                    res.status(500).send({error: 'Listing stores failed!'});
-                } else { // add to cache
-                    console.log('>> Found in DB');
-                    //client.setex(id, CACHE_INTERVAL, JSON.stringify(store));
-                    if (!isEmptyObject(store)) {
-                        cacheOp.setCache(client, store, CACHE_INTERVAL);
-                        res.json(store);
-                    }
-                }
-            });
-        }
-    });
-});
-
-// updating store
-app.put('/api/store/:_id', function(req, res) {
-    var id = req.params._id;
-    var store = req.body;
-    Store.updateStore(id, store, {}, function(err, store){
-        if (err) {
-            console.error(">> Error updating people" + err);
-            res.status(500).send({ error: 'Updating people failed!' });
-        } else {
-            console.log(">> Store is updated in cache", store);
-            //client.setex(store._id, CACHE_INTERVAL, JSON.stringify(store)); // save the new store to cache
-            cacheOp.deleteCache(client, id);
-            res.json(store);
-        }
-    })
-});
-
-// creating store
-app.post('/api/store', function (req, res) {
-    var store1 = req.body;
-    console.log('> Creating store');
-    Store.addStore(store1, function(err, store1){
-        if (err) {
-            console.error(">> Error posting stores", err);
-            res.status(500).send({ error: 'Posting stores failed!' });
-        } else {
-            //console.log(">> Store is set to cache: ", JSON.parse(store1));
-            //client.setex(store1._id, CACHE_INTERVAL, JSON.stringify(store1)); // save the new store to cache
-            cacheOp.setCache(client, store1, CACHE_INTERVAL);
-            res.json(store1);
-        }
-    });
-});
-
-
-// Delete store
-app.delete('/api/store/:_id', function(req, res) {
-    var id = req.params._id;
-    console.log('> Trying to delete store: ', id);
-    Store.removeStore(id, function(err, store) {
-        if (err) {
-            console.error(">> Error deleting store", err);
-            res.status(500).send({ error: 'Deleting store failed!' });
-        } else {
-            // delete cache
-            cacheOp.deleteCache(client, id);
-            res.json(store);
-        }
-    })
 });
 
 /* ====================================== PROFILES =============================================*/
@@ -217,6 +122,99 @@ app.delete('/api/profile/:_id', function(req, res) {
             // delete cache
             cacheOp.deleteCache(profile, id);
             res.json(profile);
+        }
+    })
+});
+
+/* ====================================== DOCUMENTS =============================================*/
+// get all documents
+app.get('/api/document', function(req, res) {
+    console.log(">> Sending documents...");
+    Document.getDocument(function(err, document){
+        if (err) {
+            console.error(">> Error finding documents");
+            res.status(500).send({ error: 'Listing stores failed!' });
+        }
+        res.json(document);
+    })
+});
+
+//get document by id
+app.get('/api/document/:_id', function (req, res) {
+    console.log("> Requested document by id...");
+    var id = req.params._id;
+
+    client.get(id, function(err, result) {
+        if (err) console.log('Error searching cache');
+        if (!isEmptyObject(result)) { // search in cache
+            console.log('>> Found in cache');
+            res.json(JSON.parse(result));
+        } else { // if not in cache
+            console.log('>> Empty in cache. Finding in DB...');
+            Document.getDocumentById(id, function (err, document) {
+                if (err) {
+                    console.error(">> Error finding documents");
+                    res.status(500).send({error: 'Document by ID failed!'});
+                } else { // add to cache
+                    console.log('>> Found in DB');
+                    //client.setex(id, CACHE_INTERVAL, JSON.stringify(store));
+                    if (!isEmptyObject(document)) {
+                        cacheOp.setCache(client, document, CACHE_INTERVAL);
+                        res.json(document);
+                    }
+                }
+            });
+        }
+    });
+});
+
+// creating document
+app.post('/api/document', function (req, res) {
+    var document = req.body;
+    console.log('> Creating document');
+    Document.addDocument(document, function(err, document){
+        if (err) {
+            console.error(">> Error posting stores", err);
+            res.status(500).send({ error: 'Posting stores failed!' });
+        } else {
+            console.log(">> Document is set to cache: ", document.toString());
+            //client.setex(store1._id, CACHE_INTERVAL, JSON.stringify(store1)); // save the new store to cache
+            cacheOp.setCache(client, document, CACHE_INTERVAL);
+            res.json(document);
+        }
+    });
+});
+
+// updating document
+app.put('/api/document/:_id', function(req, res) {
+    var id = req.params._id;
+    var document = req.body;
+    console.log('> Creating document');
+    Document.updateDocument(id, document, {}, function(err, document){
+        if (err) {
+            console.error(">> Error updating document" + err);
+            res.status(500).send({ error: 'Updating document failed!' });
+        } else {
+            console.log(">> Document is updated in cache", document);
+            //client.setex(store._id, CACHE_INTERVAL, JSON.stringify(store)); // save the new store to cache
+            cacheOp.deleteCache(client, id);
+            res.json(document);
+        }
+    })
+});
+
+// deleting document
+app.delete('/api/document/:_id', function(req, res) {
+    var id = req.params._id;
+    console.log('> Trying to delete document: ', id);
+    Document.removeDocument(id, function(err, document) {
+        if (err) {
+            console.error(">> Error deleting store", err);
+            res.status(500).send({ error: 'Deleting store failed!' });
+        } else {
+            // delete cache
+            cacheOp.deleteCache(document, id);
+            res.json(document);
         }
     })
 });

@@ -16,6 +16,12 @@ myApp.config(['$routeProvider', function($routeProvider) {
             templateUrl: 'views/profile.html'
         })
 
+        // document
+        .when('/document', {
+            controller: 'DocumentController',
+            templateUrl: 'views/document.html'
+        })
+
         .otherwise({
             redirectTo: '/home'
         });
