@@ -123,7 +123,7 @@ app.delete('/api/profile/:_id', function(req, res) {
             res.status(500).send({ error: 'Deleting profile failed!' });
         } else {
             // delete cache
-            cacheOp.deleteCache(profile, id);
+            cacheOp.deleteCache(client, id);
             res.json(profile);
         }
     })
@@ -216,7 +216,7 @@ app.delete('/api/document/:_id', function(req, res) {
             res.status(500).send({ error: 'Deleting document failed!' });
         } else {
             // delete cache
-            cacheOp.deleteCache(document, id);
+            cacheOp.deleteCache(client, id);
             res.json(document);
         }
     })
@@ -309,7 +309,7 @@ app.delete('/api/picture/:_id', function(req, res) {
             res.status(500).send({ error: 'Deleting picture failed!' });
         } else {
             // delete cache
-            cacheOp.deleteCache(picture, id);
+            cacheOp.deleteCache(client, id);
             res.json(picture);
         }
     })
@@ -470,7 +470,7 @@ app.delete('/api/attachment/:_id', function(req, res) {
             res.status(500).send({ error: 'Deleting store failed!' });
         } else {
             // delete cache
-            cacheOp.deleteCache(attachment, id);
+            cacheOp.deleteCache(client, id);
             res.json(attachment);
         }
     })
@@ -618,7 +618,7 @@ app.delete('/api/message/:_id', function(req, res) {
             res.status(500).send({ error: 'Deleting store failed!' });
         } else {
             // delete cache
-            cacheOp.deleteCache(message, id);
+            cacheOp.deleteCache(client, id);
             res.json(message);
         }
     })

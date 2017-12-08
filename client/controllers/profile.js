@@ -27,7 +27,7 @@ myApp.controller('ProfileController', [ '$scope', '$http', '$location', '$routeP
 
         $scope.addProfile = function() {
             console.log($scope.profile);
-            $http.post('/api/profile', $scope.doc).then(function(response) {
+            $http.post('/api/profile', $scope.prf).then(function(response) {
                 console.log(response);
                 window.location.href="#!profile";
             }).catch(function() {
@@ -36,7 +36,7 @@ myApp.controller('ProfileController', [ '$scope', '$http', '$location', '$routeP
         };
 
         $scope.updateProfile = function(id) {
-            $http.put('/api/profile/' + id, $scope.doc).then(function (response) {
+            $http.put('/api/profile/' + id, $scope.prf).then(function (response) {
                 console.log(response);
                 window.location.href="#!profile";
             }).catch(function() {
@@ -45,7 +45,7 @@ myApp.controller('ProfileController', [ '$scope', '$http', '$location', '$routeP
         };
 
         $scope.deselect = function() {
-            $scope.doc = "";
+            $scope.prf = "";
         }
 
     }]);
