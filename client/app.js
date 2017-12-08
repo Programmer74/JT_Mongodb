@@ -28,10 +28,16 @@ myApp.config(['$routeProvider', function($routeProvider) {
             templateUrl: 'views/picture.html'
         })
 
-        // picture
+        // attachment
         .when('/attachment', {
             controller: 'AttachmentController',
             templateUrl: 'views/attachment.html'
+        })
+
+        // message
+        .when('/message', {
+            controller: 'MessageController',
+            templateUrl: 'views/message.html'
         })
 
         .otherwise({

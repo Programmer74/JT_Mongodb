@@ -22,6 +22,7 @@ Profile = require('./models/profile');
 Document = require('./models/document');
 Picture = require('./models/picture');
 Attachment = require('./models/attachment');
+Message = require('./models/message');
 
 // operations
 var cacheOp = require('./modules/cacheOperations');
@@ -471,6 +472,154 @@ app.delete('/api/attachment/:_id', function(req, res) {
             // delete cache
             cacheOp.deleteCache(attachment, id);
             res.json(attachment);
+        }
+    })
+});
+
+/* ====================================== MESSAGES =============================================*/
+// get all messages
+app.get('/api/message', function(req, res) {
+    console.log(">> Sending messages...");
+    Message.getMessage(function(err, message){
+        if (err) {
+            console.error(">> Error finding messages");
+            res.status(500).send({ error: 'Listing messages failed!' });
+        }
+        res.json(message);
+    })
+});
+
+//get message by id
+app.get('/api/message/:_id', function (req, res) {
+    console.log("> Requested message by id...");
+    var id = req.params._id;
+
+    client.get(id, function(err, result) {
+        if (err) console.log('Error searching cache');
+        if (!isEmptyObject(result)) { // search in cache
+            console.log('>> Found in cache');
+            res.json(JSON.parse(result));
+        } else { // if not in cache
+            console.log('>> Empty in cache. Finding in DB...');
+            Message.getMessageById(id, function (err, message) {
+                if (err) {
+                    console.error(">> Error finding messages");
+                    res.status(500).send({error: 'Message by ID failed!'});
+                } else { // add to cache
+                    console.log('>> Found in DB');
+                    //client.setex(id, CACHE_INTERVAL, JSON.stringify(store));
+                    if (!isEmptyObject(message)) {
+                        cacheOp.setCache(client, message, CACHE_INTERVAL);
+                        res.json(message);
+                    }
+                }
+            });
+        }
+    });
+});
+
+// creating message
+app.post('/api/message', function (req, res) {
+    var message = req.body;
+    console.log('> Creating message');
+
+    Profile.getProfileById(message.fromid, function(err, profile) {
+        if (err) {
+            console.error(">>> No profile found by fromid " + message.fromid);
+            res.status(500).send({ error: 'Posting messages failed!' });
+        } else {
+            Profile.getProfileById(message.toid, function(err, profile) {
+                if (err) {
+                    console.error(">>> No profile found by toid " + message.toid);
+                    res.status(500).send({ error: 'Posting messages failed!' });
+                } else {
+                    Attachment.getAttachmentById(message.attachmentid, function(err, attachment) {
+                        if (err) {
+                            if (message.attachmentid !== '') {
+                                console.error(">>> No attachment found by attid " + message.attachmentid);
+                                res.status(500).send({error: 'Posting messages failed!'});
+                            }
+                        } else {
+                            Message.addMessage(message, function(err, message){
+                                if (err) {
+                                    console.error(">> Error posting messages", err);
+                                    res.status(500).send({ error: 'Posting messages failed!' });
+                                } else {
+                                    console.log(">> Message is set to cache: ", message.toString());
+                                    //client.setex(store1._id, CACHE_INTERVAL, JSON.stringify(store1)); // save the new store to cache
+                                    cacheOp.setCache(client, message, CACHE_INTERVAL);
+                                    res.json(message);
+                                }
+                            });
+                        }
+
+                    });
+                }
+
+            });
+        }
+
+    });
+
+});
+
+// updating message
+app.put('/api/message/:_id', function(req, res) {
+    var id = req.params._id;
+    var message = req.body;
+    console.log('> Creating message');
+
+    Profile.getProfileById(message.fromid, function(err, profile) {
+        if (err) {
+            console.error(">>> No profile found by fromid " + message.fromid);
+            res.status(500).send({ error: 'Posting messages failed!' });
+        } else {
+            Profile.getProfileById(message.toid, function(err, profile) {
+                if (err) {
+                    console.error(">>> No profile found by toid " + message.toid);
+                    res.status(500).send({ error: 'Posting messages failed!' });
+                } else {
+                    Attachment.getAttachmentById(message.attachmentid, function(err, attachment) {
+                        if (err) {
+                            if (message.attachmentid !== '') {
+                                console.error(">>> No attachment found by attid " + message.attachmentid);
+                                res.status(500).send({error: 'Posting messages failed!'});
+                            }
+                        } else {
+                            Message.updateMessage(id, message, {}, function(err, message){
+                                if (err) {
+                                    console.error(">> Error updating message" + err);
+                                    res.status(500).send({ error: 'Updating message failed!' });
+                                } else {
+                                    console.log(">> Message is updated in cache", message);
+                                    //client.setex(store._id, CACHE_INTERVAL, JSON.stringify(store)); // save the new store to cache
+                                    cacheOp.deleteCache(client, id);
+                                    res.json(message);
+                                }
+                            })
+                        }
+
+                    });
+                }
+
+            });
+        }
+
+    });
+});
+
+// deleting message
+app.delete('/api/message/:_id', function(req, res) {
+    var id = req.params._id;
+    console.log('> Trying to delete message: ', id);
+    Message.removeMessage(id, function(err, message) {
+        if (err) {
+            console.error(">> Error deleting message", err);
+            res.status(500).send({ error: 'Deleting store failed!' });
+        } else {
+            // delete cache
+            cacheOp.deleteCache(message, id);
+            res.json(message);
         }
     })
 });

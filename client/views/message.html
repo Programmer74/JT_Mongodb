@@ -1,0 +1,47 @@
+<div class="panel panel-default" ng-init="getMessage() ">
+    <div class="panel-heading">
+        <h2 class="panel-title">Messages</h2>
+    </div>
+        <table class="table table-striped">
+            <tbody>
+            <tr>
+                <td><input class="form-control" ng-model="msg.fromid" placeholder="FromID"></td>
+                <td><input class="form-control" ng-model="msg.toid" placeholder="ToID"></td>
+                <td><input class="form-control" ng-model="msg.data" placeholder="Message text"></td>
+                <td><input class="form-control" ng-model="msg.attachmentid" placeholder="AttachmentID"></td>
+                <td>
+                    <button class="btn btn-primary" ng-click="addMessage()">Add Message</button>
+                </td>
+                <td>
+                    <button class="btn btn-info" ng-click="deselect()">Clear</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>FromID</th>
+            <th>ToID</th>
+            <th>Data</th>
+            <th>AttachmentID</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="m in message">
+            <td>{{m._id}}</td>
+            <td>{{m.fromid}}</td>
+            <td>{{m.toid}}</td>
+            <td>{{m.data}}</td>
+            <td>{{m.attachmentid}}</td>
+
+            <td align="right"><button class="btn btn-danger" ng-click="removeMessage(m._id)">Remove</button>&nbsp;&nbsp;
+                <button class="btn btn-warning" ng-click="updateMessage(m._id)">Edit</button>&nbsp;&nbsp;
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+
+</div>
