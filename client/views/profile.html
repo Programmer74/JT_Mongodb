@@ -1,0 +1,45 @@
+<div class="panel panel-default" ng-init="getProfile() ">
+    <div class="panel-heading">
+        <h2 class="panel-title">Profiles</h2>
+    </div>
+        <table class="table table-striped">
+            <tbody>
+            <tr>
+                <td><input class="form-control" ng-model="prf.first_name" placeholder="First Name"></td>
+                <td><input class="form-control" ng-model="prf.last_name" placeholder="Last Name"></td>
+                <td><input class="form-control" ng-model="prf.email" placeholder="E-mail"></td>
+                <td><input class="form-control" ng-model="prf.password" placeholder="Password"></td>
+                <td>
+                    <button class="btn btn-primary" ng-click="addProfile()">Add Profile</button>
+                </td>
+                <td>
+                    <button class="btn btn-info" ng-click="deselect()">Clear</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>E-mail</th>
+            <th>Password</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="p in profile">
+            <td>{{p.first_name}}</td>
+            <td>{{p.last_name}}</td>
+            <td>{{p.email}}</td>
+            <td>{{p.password}}</td>
+
+            <td align="right"><button class="btn btn-danger" ng-click="removeProfile(p._id)">Remove</button>&nbsp;&nbsp;
+                <button class="btn btn-warning" ng-click="updateProfile(p._id)">Edit</button>&nbsp;&nbsp;
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+
+</div>
