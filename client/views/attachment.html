@@ -1,0 +1,41 @@
+<div class="panel panel-default" ng-init="getAttachment() ">
+    <div class="panel-heading">
+        <h2 class="panel-title">Attachments</h2>
+    </div>
+        <table class="table table-striped">
+            <tbody>
+            <tr>
+                <td><input class="form-control" ng-model="att.type" placeholder="Type (document or picture)"></td>
+                <td><input class="form-control" ng-model="att.attachmentid" placeholder="AttachmentID"></td>
+                <td>
+                    <button class="btn btn-primary" ng-click="addAttachment()">Add Attachment</button>
+                </td>
+                <td>
+                    <button class="btn btn-info" ng-click="deselect()">Clear</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>AttachmentID</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="a in attachment">
+            <td>{{a._id}}</td>
+            <td>{{a.type}}</td>
+            <td>{{a.attachmentid}}</td>
+
+            <td align="right"><button class="btn btn-danger" ng-click="removeAttachment(a._id)">Remove</button>&nbsp;&nbsp;
+                <button class="btn btn-warning" ng-click="updateAttachment(a._id)">Edit</button>&nbsp;&nbsp;
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+
+</div>

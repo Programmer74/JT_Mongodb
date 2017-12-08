@@ -28,6 +28,12 @@ myApp.config(['$routeProvider', function($routeProvider) {
             templateUrl: 'views/picture.html'
         })
 
+        // picture
+        .when('/attachment', {
+            controller: 'AttachmentController',
+            templateUrl: 'views/attachment.html'
+        })
+
         .otherwise({
             redirectTo: '/home'
         });

@@ -53,8 +53,9 @@
  module.exports.updatePicture = function(id, picture, options, callback){
      var query = {_id: id};
      var update = {
-         url: document.url,
-         description: document.description
+         url: picture.url,
+         description: picture.description,
+         tags: picture.tags
      };
      Picture.findOneAndUpdate(query, update, options, callback);
  };
