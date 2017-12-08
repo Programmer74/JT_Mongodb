@@ -28,7 +28,7 @@
         <tr ng-repeat="a in attachment">
             <td>{{a._id}}</td>
             <td>{{a.type}}</td>
-            <td>{{a.attachmentid}}</td>
+            <td><a href = "{{a.type == 'picture' ? '#!/picture#' + a.attachmentid : '#!/document#' + a.attachmentid}}">{{a.attachmentid}}</a></td>
 
             <td align="right"><button class="btn btn-danger" ng-click="removeAttachment(a._id)">Remove</button>&nbsp;&nbsp;
                 <button class="btn btn-warning" ng-click="updateAttachment(a._id)">Edit</button>&nbsp;&nbsp;
